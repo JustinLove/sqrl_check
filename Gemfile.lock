@@ -1,0 +1,46 @@
+GIT
+  remote: git://github.com/JustinLove/sqrl_auth.git
+  revision: 6dc8af6694e1e4ff7253407e49c3edcaa800be24
+  branch: master
+  specs:
+    sqrl_auth (0.1.0)
+      rbnacl
+      scrypt
+
+PATH
+  remote: .
+  specs:
+    sqrl_check (0.0.1)
+      httpclient
+      sqrl_auth
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ffi (1.9.14)
+    ffi-compiler (1.0.1)
+      ffi (>= 1.0.0)
+      rake
+    httpclient (2.8.2.4)
+    minitest (5.9.1)
+    minitest-hooks (1.4.0)
+    rake (11.3.0)
+    rbnacl (3.4.0)
+      ffi
+    scrypt (3.0.3)
+      ffi-compiler (>= 1.0.0)
+      rake
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.3)
+  minitest
+  minitest-hooks
+  rake
+  sqrl_auth!
+  sqrl_check!
+
+BUNDLED WITH
+   1.13.6
