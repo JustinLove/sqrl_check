@@ -15,6 +15,16 @@ class SqrlTest < MiniTest::Test
     :agent_name => "SQRL/1 SQRL::Check/#{SQRL::Check::VERSION}",
     :default_header => SqrlHeaders,
   }
+  def post(session)
+    req = SQRL::QueryGenerator.new(session)
+    req = yield req if block_given?
+    h = HTTPClient.new(SqrlRequest)
+    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE if req.post_path.start_with?('qrl://')
+    res = h.post(req.post_path, req.post_body)
+
+    SQRL::ResponseParser.new(session, res.body)
+  end
+
 
   def create_session(url, imks)
     url = upgrade_url(url)
@@ -47,17 +57,10 @@ end
 class CheckSqrlQueryWithNewIdentity < SqrlTest
   def before_all
     iuk = SQRL::Key::IdentityUnlock.new
-    ilk = iuk.identity_lock_key
-    imk = iuk.identity_master_key
     url = 'http://localhost:3000'
-    session = create_session(url, [imk])
+    session = create_session(url, [iuk.identity_master_key])
 
-    req = SQRL::QueryGenerator.new(session).query!
-    h = HTTPClient.new(SqrlRequest)
-    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE if req.post_path.start_with?('qrl://')
-    res = h.post(req.post_path, req.post_body)
-
-    @parsed = SQRL::ResponseParser.new(session, res.body)
+    @parsed = post(session) {|req| req.query! }
   end
 
   attr_reader :parsed
