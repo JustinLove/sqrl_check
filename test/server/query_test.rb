@@ -11,41 +11,17 @@ class CheckSqrlQueryWithNewIdentity < SqrlTest
 
   attr_reader :parsed
 
-  def test_known_version
-    assert_equal('1', parsed.params['ver'], 'check is only defined for version 1')
-  end
+  assert_known_version :parsed
 
-  def test_id_match_should_not_be_set
-    assert(!parsed.id_match?)
-  end
-
-  def test_prevous_id_match_should_not_be_set
-    assert(!parsed.previous_id_match?)
-  end
-
-  def test_ip_match_expected
-    assert(parsed.ip_match?)
-  end
-
-  #sqrl_disabled could go either way
-
-  def test_function_is_supported
-    assert(!parsed.function_not_supported?)
-  end
-
-  def test_no_transient_error
-    assert(!parsed.transient_error?)
-  end
-
-  def test_command_succeeded
-    assert(!parsed.command_failed?)
-  end
-
-  def test_no_client_failure
-    assert(!parsed.client_failure?)
-  end
-
-  def test_no_association_to_be_bad
-    assert(!parsed.bad_association_id?)
-  end
+  assert_flags :parsed, {
+    :id_match               => false,
+    :previous_id_match      => false,
+    :ip_match               => TRUE,
+    #:sqrl_disabled could go either way
+    :function_not_supported => false,
+    :transient_error        => false,
+    :command_failed         => false,
+    :client_failure         => false,
+    :bad_association_id     => false,
+  }
 end

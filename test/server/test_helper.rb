@@ -52,4 +52,18 @@ class SqrlTest < MiniTest::Test
       return url
     end
   end
+
+  def self.assert_flags(response_var, flags)
+    flags.each_pair do |name, value|
+      define_method "test_#{name}_is_#{value}" do
+        assert_equal(value, send(response_var).send("#{name}?"))
+      end
+    end
+  end
+
+  def self.assert_known_version(response_var)
+    define_method :test_known_version do
+      assert_equal('1', send(response_var).params['ver'], 'check is only defined for version 1')
+    end
+  end
 end
