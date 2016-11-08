@@ -8,9 +8,7 @@ class CheckSqrlReplaceLockedIdentity < SqrlTest
     session = create_session(url, [previous.identity_master_key])
     lock = previous.identity_lock_key.unlock_pair
     @suk = lock[:suk]
-    @preflight = post(session) {|req|
-      req.ident!.setlock(lock)
-    }
+    @preflight = post(session) {|req| req.ident!.setlock(lock) }
 
     session = create_session(url, [current.identity_master_key, previous.identity_master_key])
     @query = post(session) {|req| req.query! }
