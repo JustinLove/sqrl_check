@@ -3,11 +3,10 @@ require_relative 'test_helper'
 class CheckSqrlIdentWithExistingIdentity < SqrlTest
   def before_all
     iuk = SQRL::Key::IdentityUnlock.new
-    url = 'http://localhost:3000'
-    session = create_session(url, [iuk.identity_master_key])
+    session = create_session(URL, [iuk.identity_master_key])
     @preflight = post(session) {|req| req.ident! }
 
-    session = create_session(url, [iuk.identity_master_key])
+    session = create_session(URL, [iuk.identity_master_key])
     @query = post(session) {|req| req.query! }
     @ident = post(session) {|req| req.ident! }
   end

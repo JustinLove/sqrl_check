@@ -3,14 +3,13 @@ require_relative 'test_helper'
 class CheckSqrlDisable < SqrlTest
   def before_all
     current = SQRL::Key::IdentityUnlock.new
-    url = 'http://localhost:3000'
-    session = create_session(url, [current.identity_master_key])
+    session = create_session(URL, [current.identity_master_key])
     @preflight = post(session) {|req| req.ident! }
 
-    session = create_session(url, [current.identity_master_key])
+    session = create_session(URL, [current.identity_master_key])
     @disable = post(session) {|req| req.disable! }
 
-    session = create_session(url, [current.identity_master_key])
+    session = create_session(URL, [current.identity_master_key])
     @ident_attempt = post(session) {|req| req.ident! }
   end
 

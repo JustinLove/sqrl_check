@@ -11,6 +11,8 @@ require 'sqrl/check/version'
 class SqrlTest < MiniTest::Test
   include Minitest::Hooks
 
+  URL = 'http://localhost:3000'
+
   SqrlHeaders = {'Content-Type' => 'application/x-www-form-urlencoded'}
   SqrlRequest = {
     :agent_name => "SQRL/1 SQRL::Check/#{SQRL::Check::VERSION}",

@@ -3,15 +3,14 @@ require_relative 'test_helper'
 class CheckSqrlEnableUnlocked < SqrlTest
   def before_all
     current = SQRL::Key::IdentityUnlock.new
-    url = 'http://localhost:3000'
-    session = create_session(url, [current.identity_master_key])
+    session = create_session(URL, [current.identity_master_key])
     @create = post(session) {|req| req.ident! }
     @disable = post(session) {|req| req.disable! }
 
-    session = create_session(url, [current.identity_master_key])
+    session = create_session(URL, [current.identity_master_key])
     @enable = post(session) {|req| req.enable! }
 
-    session = create_session(url, [current.identity_master_key])
+    session = create_session(URL, [current.identity_master_key])
     @ident_attempt = post(session) {|req| req.ident! }
   end
 
