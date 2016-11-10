@@ -12,7 +12,8 @@ require 'sqrl/check/version'
 class SqrlTest < MiniTest::Test
   include Minitest::Hooks
 
-  URL = 'http://localhost:3000'
+  URL = ENV['SQRL_CHECK_URL'] || 'http://localhost:3000'
+  SignedCert = !!ENV['SQRL_CHECK_SIGNED_CERT']
 
   SqrlHeaders = {'Content-Type' => 'application/x-www-form-urlencoded'}
   SqrlRequest = {
@@ -23,12 +24,11 @@ class SqrlTest < MiniTest::Test
     req = SQRL::QueryGenerator.new(session)
     req = yield req if block_given?
     h = HTTPClient.new(SqrlRequest)
-    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE if req.post_path.start_with?('qrl://')
+    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless SignedCert
     res = h.post(req.post_path, req.post_body)
 
     SQRL::ResponseParser.new(session, res.body)
   end
-
 
   def create_session(url, imks)
     url = upgrade_url(url)
@@ -41,7 +41,7 @@ class SqrlTest < MiniTest::Test
   def upgrade_url(url)
     return url unless url.start_with?('http')
     h = HTTPClient.new(ScanRequest)
-    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE if url.start_with?('http://')
+    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless SignedCert
     res = h.get(url)
     matches = res.body.match(/"(s?qrl:\/\/[^"]+)"/m)
     if matches
