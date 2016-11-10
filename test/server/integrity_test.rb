@@ -31,6 +31,24 @@ module CheckSqrlIntegrity
     end
   end
 
+  class SingleUse < SqrlTest
+    def before_all
+      session = create_session(URL, [IUK.identity_master_key])
+      copy = session.dup
+      post(session) {|req| req.query! }
+      @replay = post(copy) {|req| req.query! }
+    end
+
+    attr_reader :replay
+
+    assert_flags :replay, {
+      :ip_match               => TRUE,
+      :transient_error        => TRUE,
+      :command_failed         => TRUE,
+      :client_failure         => false,
+    }
+  end
+
   class ModifiedBase64 < SqrlTest
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
@@ -42,9 +60,10 @@ module CheckSqrlIntegrity
     attr_reader :query
 
     assert_flags :query, {
+      :ip_match               => false,
       :transient_error        => TRUE,
       :command_failed         => TRUE,
-      :client_failure         => TRUE,
+      :client_failure         => false,
     }
   end
 
@@ -52,18 +71,28 @@ module CheckSqrlIntegrity
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
       post(session) {|req| req.query! }
-      server = Base64.decode64(session.server_string)
-      server['foo=bar']
-      session.server_string += Base64.encode64(server)
+      server = SQRL::Base64.decode(session.server_string)
+      server += "\r\nfoo=bar"
+      session.server_string = SQRL::Base64.encode(server)
       @query = post(session) {|req| req.query! }
+      @recovery = post(session) {|req| req.query! }
     end
 
     attr_reader :query
+    attr_reader :recovery
 
     assert_flags :query, {
+      :ip_match               => TRUE,
       :transient_error        => TRUE,
       :command_failed         => TRUE,
-      :client_failure         => TRUE,
+      :client_failure         => false,
+    }
+
+    assert_flags :recovery, {
+      :ip_match               => TRUE,
+      :transient_error        => false,
+      :command_failed         => false,
+      :client_failure         => false,
     }
   end
 
@@ -77,9 +106,10 @@ module CheckSqrlIntegrity
     attr_reader :query
 
     assert_flags :query, {
+      :ip_match               => TRUE,
       :transient_error        => TRUE,
       :command_failed         => TRUE,
-      :client_failure         => TRUE,
+      :client_failure         => false,
     }
   end
 end

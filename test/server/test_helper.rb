@@ -6,6 +6,7 @@ require 'sqrl/key/unlock_request_signing'
 require 'sqrl/client_session'
 require 'sqrl/query_generator'
 require 'sqrl/response_parser'
+require 'sqrl/base64'
 require 'sqrl/check/version'
 
 class SqrlTest < MiniTest::Test
