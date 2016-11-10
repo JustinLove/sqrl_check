@@ -1,6 +1,6 @@
 require_relative 'test_helper'
 
-class CheckSqrlIdentWithExistingIdentity < SqrlTest
+class SQRL::Check::Server::IdentWithExistingIdentity < SQRL::Check::Server::Test
   def before_all
     iuk = SQRL::Key::IdentityUnlock.new
     session = create_session(URL, [iuk.identity_master_key])

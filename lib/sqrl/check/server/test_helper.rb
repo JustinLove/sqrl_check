@@ -9,7 +9,9 @@ require 'sqrl/response_parser'
 require 'sqrl/base64'
 require 'sqrl/check/version'
 
-class SqrlTest < MiniTest::Test
+module SQRL::Check::Server; end
+
+class SQRL::Check::Server::Test < MiniTest::Test
   include Minitest::Hooks
 
   URL = ENV['SQRL_CHECK_URL'] || 'http://localhost:3000'

@@ -1,9 +1,9 @@
 require_relative 'test_helper'
 
-module CheckSqrlIntegrity
+class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
   IUK = SQRL::Key::IdentityUnlock.new
 
-  class Nonced < SqrlTest
+  class Nonced < SQRL::Check::Server::Test
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
       @query1 = post(session) {|req| req.query! }
@@ -31,7 +31,7 @@ module CheckSqrlIntegrity
     end
   end
 
-  class SingleUse < SqrlTest
+  class SingleUse < SQRL::Check::Server::Test
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
       copy = session.dup
@@ -49,7 +49,7 @@ module CheckSqrlIntegrity
     }
   end
 
-  class ModifiedBase64 < SqrlTest
+  class ModifiedBase64 < SQRL::Check::Server::Test
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
       post(session) {|req| req.query! }
@@ -67,7 +67,7 @@ module CheckSqrlIntegrity
     }
   end
 
-  class ModifiedServer < SqrlTest
+  class ModifiedServer < SQRL::Check::Server::Test
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
       post(session) {|req| req.query! }
@@ -96,7 +96,7 @@ module CheckSqrlIntegrity
     }
   end
 
-  class ModifiedUrl < SqrlTest
+  class ModifiedUrl < SQRL::Check::Server::Test
     def before_all
       session = create_session(URL, [IUK.identity_master_key])
       session.server_string += 'x'

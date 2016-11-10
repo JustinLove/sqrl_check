@@ -1,6 +1,6 @@
 require_relative 'test_helper'
 
-class CheckSqrlReplaceUnlockedIdentity < SqrlTest
+class SQRL::Check::Server::ReplaceUnlockedIdentity < SQRL::Check::Server::Test
   def before_all
     current = SQRL::Key::IdentityUnlock.new
     previous = SQRL::Key::IdentityUnlock.new

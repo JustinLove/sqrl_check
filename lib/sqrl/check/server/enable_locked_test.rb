@@ -1,6 +1,6 @@
 require_relative 'test_helper'
 
-class CheckSqrlEnableLocked < SqrlTest
+class SQRL::Check::Server::EnableLocked < SQRL::Check::Server::Test
   def before_all
     current = SQRL::Key::IdentityUnlock.new
     session = create_session(URL, [current.identity_master_key])
