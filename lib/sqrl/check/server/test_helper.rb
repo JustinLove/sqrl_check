@@ -74,4 +74,6 @@ class SQRL::Check::Server::Test < Minitest::Test
   end
 end
 
-Minitest.autorun
+if $PROGRAM_NAME.match(/_test\.rb|rake_test_loader\.rb/)
+  Minitest.autorun
+end
