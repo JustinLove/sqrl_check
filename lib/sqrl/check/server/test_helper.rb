@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require 'minitest'
 require 'minitest/hooks/default'
 require 'httpclient'
 require 'sqrl/key/identity_unlock'
@@ -11,7 +11,7 @@ require 'sqrl/check/version'
 
 module SQRL::Check::Server; end
 
-class SQRL::Check::Server::Test < MiniTest::Test
+class SQRL::Check::Server::Test < Minitest::Test
   include Minitest::Hooks
 
   URL = ENV['SQRL_CHECK_URL'] || 'http://localhost:3000'
@@ -73,3 +73,5 @@ class SQRL::Check::Server::Test < MiniTest::Test
     end
   end
 end
+
+Minitest.autorun
