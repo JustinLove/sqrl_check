@@ -1,5 +1,5 @@
-require 'rake/testtask'
+require 'sqrl/check/server'
 
-Rake::TestTask.new do |t|
-  t.pattern = "lib/**/*_test.rb"
+task :test do
+  SQRL::Check::Server.autorun
 end
