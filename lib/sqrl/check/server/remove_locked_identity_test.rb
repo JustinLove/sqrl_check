@@ -3,12 +3,12 @@ require_relative 'test_helper'
 class SQRL::Check::Server::RemoveLockedIdentity < SQRL::Check::Server::Test
   def before_all
     current = SQRL::Key::IdentityUnlock.new
-    session = create_session(URL, [current.identity_master_key])
+    session = create_session(target_url, [current.identity_master_key])
     lock = current.identity_lock_key.unlock_pair
     @suk = lock[:suk]
     @create = post(session) {|req| req.ident!.setlock(lock) }
 
-    session = create_session(URL, [current.identity_master_key])
+    session = create_session(target_url, [current.identity_master_key])
     @query = post(session) {|req| req.query!.opt('suk') }
     ursk = SQRL::Key::UnlockRequestSigning.new(suk, current)
     @remove = post(session) {|req| req.remove!.unlock(ursk) }

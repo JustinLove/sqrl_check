@@ -1,3 +1,4 @@
+require 'sqrl/check/server/config'
 Dir[File.expand_path('../server/*_test.rb', __FILE__)].each do |path|
   require path
 end
@@ -5,12 +6,14 @@ end
 module SQRL
   module Check
     module Server
-      def self.run
+      def self.run(config = {})
+        Config.config(config)
         Minitest.run ["--quiet"]
         Minitest.capture
       end
 
-      def self.autorun
+      def self.autorun(config = {})
+        Config.config(config)
         Minitest.autorun
       end
     end

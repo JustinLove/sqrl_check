@@ -7,6 +7,7 @@ require 'sqrl/client_session'
 require 'sqrl/query_generator'
 require 'sqrl/response_parser'
 require 'sqrl/base64'
+require 'sqrl/check/server/config'
 require 'sqrl/check/version'
 
 module SQRL::Check::Server; end
@@ -14,8 +15,13 @@ module SQRL::Check::Server; end
 class SQRL::Check::Server::Test < Minitest::Test
   include Minitest::Hooks
 
-  URL = ENV['SQRL_CHECK_URL'] || 'http://localhost:3000'
-  SignedCert = !!ENV['SQRL_CHECK_SIGNED_CERT']
+  def target_url
+    SQRL::Check::Server::Config.target_url
+  end
+
+  def signed_cert?
+    SQRL::Check::Server::Config.signed_cert?
+  end
 
   SqrlHeaders = {'Content-Type' => 'application/x-www-form-urlencoded'}
   SqrlRequest = {
@@ -26,7 +32,7 @@ class SQRL::Check::Server::Test < Minitest::Test
     req = SQRL::QueryGenerator.new(session)
     req = yield req if block_given?
     h = HTTPClient.new(SqrlRequest)
-    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless SignedCert
+    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless signed_cert?
     res = h.post(req.post_path, req.post_body)
 
     SQRL::ResponseParser.new(session, res.body)
@@ -43,7 +49,7 @@ class SQRL::Check::Server::Test < Minitest::Test
   def upgrade_url(url)
     return url unless url.start_with?('http')
     h = HTTPClient.new(ScanRequest)
-    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless SignedCert
+    h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless signed_cert?
     res = h.get(url)
     matches = res.body.match(/"(s?qrl:\/\/[^"]+)"/m)
     if matches

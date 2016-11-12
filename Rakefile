@@ -1,5 +1,5 @@
 require 'sqrl/check/server'
 
-task :test do
-  SQRL::Check::Server.autorun
+task :test, [:target_url, :signed_cert] do |t, args|
+  SQRL::Check::Server.autorun(args)
 end

@@ -4,10 +4,10 @@ class SQRL::Check::Server::ReplaceUnlockedIdentity < SQRL::Check::Server::Test
   def before_all
     current = SQRL::Key::IdentityUnlock.new
     previous = SQRL::Key::IdentityUnlock.new
-    session = create_session(URL, [previous.identity_master_key])
+    session = create_session(target_url, [previous.identity_master_key])
     @preflight = post(session) {|req| req.ident! }
 
-    session = create_session(URL, [current.identity_master_key, previous.identity_master_key])
+    session = create_session(target_url, [current.identity_master_key, previous.identity_master_key])
     @query = post(session) {|req| req.query! }
     @ident = post(session) {|req| req.ident! }
   end

@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class SQRL::Check::Server::QueryWithNewIdentity < SQRL::Check::Server::Test
   def before_all
     iuk = SQRL::Key::IdentityUnlock.new
-    session = create_session(URL, [iuk.identity_master_key])
+    session = create_session(target_url, [iuk.identity_master_key])
 
     @parsed = post(session) {|req| req.query! }
   end

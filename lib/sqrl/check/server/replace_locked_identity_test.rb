@@ -4,12 +4,12 @@ class SQRL::Check::Server::ReplaceLockedIdentity < SQRL::Check::Server::Test
   def before_all
     current = SQRL::Key::IdentityUnlock.new
     previous = SQRL::Key::IdentityUnlock.new
-    session = create_session(URL, [previous.identity_master_key])
+    session = create_session(target_url, [previous.identity_master_key])
     lock = previous.identity_lock_key.unlock_pair
     @suk = lock[:suk]
     @preflight = post(session) {|req| req.ident!.setlock(lock) }
 
-    session = create_session(URL, [current.identity_master_key, previous.identity_master_key])
+    session = create_session(target_url, [current.identity_master_key, previous.identity_master_key])
     @query = post(session) {|req| req.query! }
     ursk = SQRL::Key::UnlockRequestSigning.new(suk, previous)
     @ident = post(session) {|req| req.ident!.unlock(ursk) }

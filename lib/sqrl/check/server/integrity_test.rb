@@ -5,7 +5,7 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
 
   class Nonced < SQRL::Check::Server::Test
     def before_all
-      session = create_session(URL, [IUK.identity_master_key])
+      session = create_session(target_url, [IUK.identity_master_key])
       @query1 = post(session) {|req| req.query! }
       @query2 = post(session) {|req| req.query! }
     end
@@ -33,7 +33,7 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
 
   class SingleUse < SQRL::Check::Server::Test
     def before_all
-      session = create_session(URL, [IUK.identity_master_key])
+      session = create_session(target_url, [IUK.identity_master_key])
       copy = session.dup
       post(session) {|req| req.query! }
       @replay = post(copy) {|req| req.query! }
@@ -51,7 +51,7 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
 
   class ModifiedBase64 < SQRL::Check::Server::Test
     def before_all
-      session = create_session(URL, [IUK.identity_master_key])
+      session = create_session(target_url, [IUK.identity_master_key])
       post(session) {|req| req.query! }
       session.server_string += 'x'
       @query = post(session) {|req| req.query! }
@@ -69,7 +69,7 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
 
   class ModifiedServer < SQRL::Check::Server::Test
     def before_all
-      session = create_session(URL, [IUK.identity_master_key])
+      session = create_session(target_url, [IUK.identity_master_key])
       post(session) {|req| req.query! }
       server = SQRL::Base64.decode(session.server_string)
       server += "\r\nfoo=bar"
@@ -98,7 +98,7 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
 
   class ModifiedUrl < SQRL::Check::Server::Test
     def before_all
-      session = create_session(URL, [IUK.identity_master_key])
+      session = create_session(target_url, [IUK.identity_master_key])
       session.server_string += 'x'
       @query = post(session) {|req| req.query! }
     end
