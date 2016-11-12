@@ -76,4 +76,8 @@ end
 
 if $PROGRAM_NAME.match(/_test\.rb|rake_test_loader\.rb/)
   Minitest.autorun
+  #at_exit {
+    #Minitest.run ["--quiet"]
+    #p Minitest.capture
+  #}
 end
