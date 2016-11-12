@@ -12,6 +12,8 @@ PATH
   specs:
     sqrl_check (0.0.1)
       httpclient
+      minitest
+      minitest-hooks
       sqrl_auth
 
 GEM
@@ -36,8 +38,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.3)
-  minitest
-  minitest-hooks
   rake
   sqrl_auth!
   sqrl_check!
