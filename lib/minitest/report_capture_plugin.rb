@@ -7,6 +7,7 @@ module Minitest
 
   def self.plugin_report_capture_init(options)
     self.reporter.reporters = [] if options[:quiet]
+    self.capture = CaptureReporter.new
     self.reporter << self.capture
   end
 
@@ -16,6 +17,4 @@ module Minitest
   class <<self
     attr_accessor :capture
   end
-
-  self.capture = CaptureReporter.new
 end
