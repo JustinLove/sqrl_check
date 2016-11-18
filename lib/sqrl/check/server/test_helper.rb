@@ -35,7 +35,7 @@ class SQRL::Check::Server::Test < Minitest::Test
     h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless signed_cert?
     res = h.post(req.post_path, req.post_body)
 
-    SQRL::ResponseParser.new(session, res.body)
+    SQRL::ResponseParser.new(res.body).update_session(session)
   end
 
   def create_session(url, imks)

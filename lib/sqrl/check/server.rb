@@ -1,5 +1,6 @@
 require 'sqrl/check/server/config'
 Dir[File.expand_path('../server/*_test.rb', __FILE__)].each do |path|
+#Dir[File.expand_path('../server/integrity_test.rb', __FILE__)].each do |path|
   require path
 end
 
