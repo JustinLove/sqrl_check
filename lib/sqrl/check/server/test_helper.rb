@@ -7,7 +7,7 @@ require 'sqrl/client_session'
 require 'sqrl/query_generator'
 require 'sqrl/response_parser'
 require 'sqrl/base64'
-require 'sqrl/check/server/config'
+require 'sqrl/check/server/web_client'
 require 'sqrl/check/version'
 
 module SQRL::Check::Server; end
@@ -15,12 +15,16 @@ module SQRL::Check::Server; end
 class SQRL::Check::Server::Test < Minitest::Test
   include Minitest::Hooks
 
+  def web_client
+    @web_client ||= SQRL::Check::Server::WebClient.new
+  end
+
   def target_url
-    SQRL::Check::Server::Config.target_url
+    web_client.target_url
   end
 
   def signed_cert?
-    SQRL::Check::Server::Config.signed_cert?
+    web_client.signed_cert?
   end
 
   SqrlHeaders = {'Content-Type' => 'application/x-www-form-urlencoded'}
