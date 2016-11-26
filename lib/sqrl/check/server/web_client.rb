@@ -43,11 +43,15 @@ module SQRL
         ScanRequest = {
           :agent_name => "SQRL::Check/#{SQRL::Check::VERSION}",
         }
-        def upgrade_url(url)
-          return url unless url.start_with?('http')
+        def fetch(url)
           h = HTTPClient.new(ScanRequest)
           h.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE unless signed_cert?
-          res = h.get(url)
+          h.get(url)
+        end
+
+        def upgrade_url(url)
+          return url unless url.start_with?('http')
+          res = fetch(url)
           matches = res.body.match(/"(s?qrl:\/\/[^"]+)"/m)
           if matches
             if matches.length > 2
