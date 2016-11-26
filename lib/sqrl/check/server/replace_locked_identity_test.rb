@@ -32,7 +32,7 @@ class SQRL::Check::Server::ReplaceLockedIdentity < SQRL::Check::Server::Test
   }
 
   def test_server_returns_suk
-    assert_equal(query.suk, suk.b)
+    assert_equal(suk.b, query.suk)
   end
 
   assert_flags :ident, {

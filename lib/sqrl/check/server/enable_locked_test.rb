@@ -34,7 +34,7 @@ class SQRL::Check::Server::EnableLocked < SQRL::Check::Server::Test
   assert_known_version :enable
 
   def test_server_returns_suk
-    assert_equal(query.suk, suk.b)
+    assert_equal(suk.b, query.suk)
   end
 
   assert_flags :enable, {
