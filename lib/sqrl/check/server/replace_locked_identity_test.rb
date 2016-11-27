@@ -31,7 +31,7 @@ class SQRL::Check::Server::ReplaceLockedIdentity < SQRL::Check::Server::Test
     :previous_id_match      => TRUE,
   }
 
-  def test_server_returns_suk
+  def test_server_return_suk_when_identified_by_pidk
     assert_equal(suk.b, query.suk)
   end
 

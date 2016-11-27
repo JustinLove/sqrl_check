@@ -30,7 +30,7 @@ class SQRL::Check::Server::RemoveLockedIdentity < SQRL::Check::Server::Test
     :previous_id_match      => false,
   }
 
-  def test_server_returns_suk
+  def test_server_should_return_suk_when_requested
     assert_equal(suk.b, query.suk)
   end
 

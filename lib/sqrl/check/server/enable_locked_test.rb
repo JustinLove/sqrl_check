@@ -33,7 +33,7 @@ class SQRL::Check::Server::EnableLocked < SQRL::Check::Server::Test
 
   assert_known_version :enable
 
-  def test_server_returns_suk
+  def test_server_should_return_suk_on_disabled_account
     assert_equal(suk.b, query.suk)
   end
 

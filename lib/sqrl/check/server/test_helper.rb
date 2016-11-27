@@ -30,7 +30,7 @@ class SQRL::Check::Server::Test < Minitest::Test
 
   def self.assert_flags(response_var, flags)
     flags.each_pair do |name, value|
-      define_method "test_#{response_var}_#{name}_is_#{value}" do
+      define_method "test_#{response_var}_response_TIF_#{name}_should_be_#{value}" do
         assert_equal(value, send(response_var).send("#{name}?"))
       end
     end
