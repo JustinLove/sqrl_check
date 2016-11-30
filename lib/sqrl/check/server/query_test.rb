@@ -3,7 +3,8 @@ require_relative 'test_helper'
 class SQRL::Check::Server::QueryWithNewIdentity < SQRL::Check::Server::Test
   def before_all
     iuk = SQRL::Key::IdentityUnlock.new
-    session = create_session(target_url, [iuk.identity_master_key])
+    @url = web_client.upgrade_url(target_url)
+    session = create_session(@url, [iuk.identity_master_key])
 
     @parsed = post(session) {|req| req.query! }
   end
@@ -11,6 +12,13 @@ class SQRL::Check::Server::QueryWithNewIdentity < SQRL::Check::Server::Test
   attr_reader :parsed
 
   assert_known_version :parsed
+
+  def test_sfn_is_present_and_base64_encoded
+    obj = SQRL::URL.parse(@url)
+    params = Hash[URI.decode_www_form(obj.query)]
+    assert(params['sfn'])
+    assert(SQRL::Base64.decode(params['sfn']))
+  end
 
   def test_ver_must_be_the_first_parameter
     assert_equal(@parsed.params.keys.index('ver'), 0)
