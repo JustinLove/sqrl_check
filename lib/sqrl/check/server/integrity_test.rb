@@ -3,7 +3,21 @@ require_relative 'test_helper'
 class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
   IUK = SQRL::Key::IdentityUnlock.new
 
-  class Nonced < SQRL::Check::Server::Test
+  class NoncedUrls < SQRL::Check::Server::Test
+    def before_all
+      @url1 = web_client.upgrade_url(target_url)
+      @url2 = web_client.upgrade_url(target_url)
+    end
+
+    attr_reader :url1
+    attr_reader :url2
+
+    def test_responses_differ
+      refute_equal(@url1, @url2)
+    end
+  end
+
+  class NoncedResponses < SQRL::Check::Server::Test
     def before_all
       session = create_session(target_url, [IUK.identity_master_key])
       @query1 = post(session) {|req| req.query! }
@@ -46,6 +60,82 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
       :transient_error        => TRUE,
       :command_failed         => TRUE,
       :client_failure         => false,
+    }
+  end
+
+  class InvalidIDS < SQRL::Check::Server::Test
+    def before_all
+      url = web_client.upgrade_url(target_url, )
+      bogus_id = SQRL::Key::IdentityUnlock.new
+      session = SQRL::ClientSession.new(url, [IUK.identity_master_key])
+      bogus_session = SQRL::ClientSession.new(url, [bogus_id.identity_master_key])
+      @query = post(session) {|req|
+        req.query!
+        class << req
+          attr_accessor :bogus_key
+        end
+        req.bogus_key = bogus_session.site_key
+        def req.to_hash
+          client = encode(client_string)
+          server = server_string
+          base = client + server
+          {
+            :client => client,
+            :server => server,
+            :ids => encode(bogus_key.signature(base)),
+            :urs => @ursk && encode(@ursk.signature(base)),
+          }.reject {|k,v| v.nil? || v == ''}
+        end
+        req
+      }
+    end
+
+    attr_reader :query
+
+    assert_flags :query, {
+      :ip_match               => TRUE,
+      :transient_error        => false,
+      :command_failed         => TRUE,
+      :client_failure         => TRUE,
+    }
+  end
+
+  class InvalidPIDS < SQRL::Check::Server::Test
+    def before_all
+      url = web_client.upgrade_url(target_url, )
+      previous_id = SQRL::Key::IdentityUnlock.new
+      bogus_id = SQRL::Key::IdentityUnlock.new
+      session = SQRL::ClientSession.new(url, [IUK.identity_master_key, previous_id])
+      bogus_session = SQRL::ClientSession.new(url, [bogus_id.identity_master_key])
+      @query = post(session) {|req|
+        req.query!
+        class << req
+          attr_accessor :bogus_key
+        end
+        req.bogus_key = bogus_session.site_key
+        def req.to_hash
+          client = encode(client_string)
+          server = server_string
+          base = client + server
+          {
+            :client => client,
+            :server => server,
+            :ids => encode(site_key.signature(base)),
+            :pids => "x",
+            :urs => @ursk && encode(@ursk.signature(base)),
+          }.reject {|k,v| v.nil? || v == ''}
+        end
+        req
+      }
+    end
+
+    attr_reader :query
+
+    assert_flags :query, {
+      :ip_match               => TRUE,
+      :transient_error        => false,
+      :command_failed         => TRUE,
+      :client_failure         => TRUE,
     }
   end
 

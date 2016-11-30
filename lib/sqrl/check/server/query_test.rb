@@ -9,12 +9,13 @@ class SQRL::Check::Server::QueryWithNewIdentity < SQRL::Check::Server::Test
     @parsed = post(session) {|req| req.query! }
   end
 
+  attr_reader :url
   attr_reader :parsed
 
   assert_known_version :parsed
 
   def test_sfn_is_present_and_base64_encoded
-    obj = SQRL::URL.parse(@url)
+    obj = SQRL::URL.parse(url)
     params = Hash[URI.decode_www_form(obj.query)]
     assert(params['sfn'])
     assert(SQRL::Base64.decode(params['sfn']))
