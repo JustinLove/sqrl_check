@@ -10,6 +10,9 @@ class SQRL::Check::Server::ReplaceLockedIdentity < SQRL::Check::Server::Test
     @preflight = post(session) {|req| req.ident!.setlock(lock) }
 
     session = create_session(target_url, [current.identity_master_key, previous.identity_master_key])
+    @locked_ident = post(session) {|req| req.ident! }
+
+    session = create_session(target_url, [current.identity_master_key, previous.identity_master_key])
     @query = post(session) {|req| req.query! }
     ursk = SQRL::Key::UnlockRequestSigning.new(suk, previous)
     @ident = post(session) {|req| req.ident!.unlock(ursk) }
@@ -17,10 +20,17 @@ class SQRL::Check::Server::ReplaceLockedIdentity < SQRL::Check::Server::Test
 
   attr_reader :suk
   attr_reader :preflight
+  attr_reader :locked_ident
   attr_reader :query
   attr_reader :ident
 
   assert_flags :preflight, {
+    :command_failed         => false,
+  }
+
+  assert_flags :locked_ident, {
+    :id_match               => false,
+    :previous_id_match      => TRUE,
     :command_failed         => false,
   }
 

@@ -10,6 +10,10 @@ class SQRL::Check::Server::EnableLocked < SQRL::Check::Server::Test
     @disable = post(session) {|req| req.disable! }
 
     session = create_session(target_url, [current.identity_master_key])
+    @locked_enable = post(session) {|req| req.enable! }
+    @locked_ident_attempt = post(session) {|req| req.ident! }
+
+    session = create_session(target_url, [current.identity_master_key])
     @query = post(session) {|req| req.query! }
     ursk = SQRL::Key::UnlockRequestSigning.new(suk, current)
     @enable = post(session) {|req| req.enable!.unlock(ursk) }
@@ -19,8 +23,10 @@ class SQRL::Check::Server::EnableLocked < SQRL::Check::Server::Test
   attr_reader :suk
   attr_reader :create
   attr_reader :disable
-  attr_reader :enable
+  attr_reader :locked_enable
+  attr_reader :locked_ident_attempt
   attr_reader :query
+  attr_reader :enable
   attr_reader :ident_attempt
 
   assert_flags :create, {
@@ -36,6 +42,16 @@ class SQRL::Check::Server::EnableLocked < SQRL::Check::Server::Test
   def test_server_should_return_suk_on_disabled_account
     assert_equal(suk.b, query.suk)
   end
+
+  assert_flags :locked_enable, {
+    :command_failed         => TRUE,
+    :sqrl_disabled          => TRUE,
+  }
+
+  assert_flags :locked_ident_attempt, {
+    :command_failed         => TRUE,
+    :sqrl_disabled          => TRUE,
+  }
 
   assert_flags :enable, {
     :id_match               => TRUE,
