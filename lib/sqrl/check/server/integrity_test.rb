@@ -139,6 +139,57 @@ class SQRL::Check::Server::Integrity < SQRL::Check::Server::Test
     }
   end
 
+  class InvalidURS < SQRL::Check::Server::Test
+    def before_all
+      current = SQRL::Key::IdentityUnlock.new
+      bogus = SQRL::Key::IdentityUnlock.new
+      session = create_session(target_url, [current.identity_master_key])
+      lock = current.identity_lock_key.unlock_pair
+      @suk = lock[:suk]
+      @create = post(session) {|req| req.ident!.setlock(lock) }
+      @disable = post(session) {|req| req.disable! }
+
+      session = create_session(target_url, [current.identity_master_key])
+      @query = post(session) {|req| req.query! }
+      ursk = SQRL::Key::UnlockRequestSigning.new(suk, bogus)
+      @enable = post(session) {|req| req.enable!.unlock(ursk) }
+      @ident_attempt = post(session) {|req| req.ident! }
+    end
+
+    attr_reader :suk
+    attr_reader :create
+    attr_reader :disable
+    attr_reader :enable
+    attr_reader :query
+    attr_reader :ident_attempt
+
+    assert_flags :create, {
+      :command_failed         => false,
+    }
+
+    assert_flags :disable, {
+      :command_failed         => false,
+    }
+
+    assert_known_version :enable
+
+    assert_flags :enable, {
+      :ip_match               => TRUE,
+      :sqrl_disabled          => TRUE,
+      :transient_error        => false,
+      :command_failed         => TRUE,
+      :client_failure         => TRUE,
+    }
+
+    assert_flags :ident_attempt, {
+      :ip_match               => TRUE,
+      :sqrl_disabled          => TRUE,
+      :transient_error        => false,
+      :command_failed         => TRUE,
+      :client_failure         => false,
+    }
+  end
+
   class ModifiedBase64 < SQRL::Check::Server::Test
     def before_all
       session = create_session(target_url, [IUK.identity_master_key])
